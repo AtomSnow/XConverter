@@ -37,6 +37,7 @@ fn main() {
 struct Xcv {
     midipath: String,
     sfzpath: String,
+    layercount: Int,
 }
 
 impl Default for Xcv {
@@ -44,6 +45,7 @@ impl Default for Xcv {
         Self {
             midipath: "".to_owned(),
             sfzpath: "".to_owned(),
+            layercount: "10".to_owned(),
         }
     }
 }
