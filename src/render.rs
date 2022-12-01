@@ -1,7 +1,6 @@
 use std::{
     time::Instant,
 };
-
 use xsynth_render::{xsynth_renderer};
 
 pub fn render(midi: &str, strsfz: &str){

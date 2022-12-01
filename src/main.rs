@@ -1,11 +1,8 @@
 mod benchmark;
 mod render;
 mod realtime;
-
-use std::fs::File;
-use std::io::BufReader;
-use rodio::{Decoder, OutputStream, source::Source};
-use std::thread;
+mod rpc;
+mod playsound;
 
 //# [tokio::main]
 fn main() {
@@ -37,7 +34,6 @@ fn main() {
 struct Xcv {
     midipath: String,
     sfzpath: String,
-    layercount: Int,
 }
 
 impl Default for Xcv {
@@ -45,7 +41,6 @@ impl Default for Xcv {
         Self {
             midipath: "".to_owned(),
             sfzpath: "".to_owned(),
-            layercount: "10".to_owned(),
         }
     }
 }
@@ -62,29 +57,21 @@ impl eframe::App for Xcv {
                 ui.text_edit_singleline(&mut self.sfzpath);
             });
                 if ui.button("Render").clicked() {
-                    //playsound();
+                    playsound::playsound("./assets/render-on.wav");
                     render::render(&self.midipath, &self.sfzpath);
                 }
                 if ui.button("Play").clicked() {
-                    //playsound();
+                    playsound::playsound("./assets/render-on.wav");
                     realtime::play(&self.midipath, &self.sfzpath);
                 }
                 if ui.button("Benchmark").clicked() {
                     //playsound();
                     benchmark::benchmark();
-                    playsound("./assets/check-on.wav");
+                    playsound::playsound("./assets/render-on.wav");
                 }
             });
         }
     }
 
 
-fn playsound(soundtype: &str){ 
-        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-        let file = BufReader::new(File::open(soundtype).unwrap());
-        // ./assets/check-on.wav
-        // ./assets/check-off.wav
-        let source = Decoder::new(file).unwrap();
-        stream_handle.play_raw(source.convert_samples());
-        std::thread::sleep(std::time::Duration::from_secs(3));
-}
+
