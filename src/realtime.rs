@@ -42,7 +42,8 @@ pub fn play(midi: &str, strsfz: &str) {
             stats.buffer().last_samples_after_read(),
             stats.buffer().average_renderer_load()
         );
-        thread::sleep(Duration::from_millis(10));
+        print!("\x1B[2J\x1B[1;1H");
+        thread::sleep(Duration::from_millis(100));
     });
 
     let midi = MIDIFile::open(midi, None).unwrap();

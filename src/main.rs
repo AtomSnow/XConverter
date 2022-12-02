@@ -1,8 +1,13 @@
 mod benchmark;
 mod render;
 mod realtime;
-mod rpc;
+//mod rpc;
 mod playsound;
+
+use eframe::egui;
+//use egui::ProgressBar;
+use std::thread;
+//use std::time::Duration;
 
 //# [tokio::main]
 fn main() {
@@ -13,8 +18,8 @@ fn main() {
         drag_and_drop_support: true,
         icon_data: None,
         initial_window_pos: None,
-        min_window_size: Some(egui::vec2(512.0, 256.0)),
-        max_window_size: Some(egui::vec2(512.0, 256.0)),
+        min_window_size: Some(egui::vec2(1024.0, 512.0)),
+        max_window_size: Some(egui::vec2(1024.0, 512.0)),
         resizable: false,
         transparent: true,
         vsync: true,
@@ -34,6 +39,8 @@ fn main() {
 struct Xcv {
     midipath: String,
     sfzpath: String,
+    layers: String,
+//    pb: f32,
 }
 
 impl Default for Xcv {
@@ -41,6 +48,8 @@ impl Default for Xcv {
         Self {
             midipath: "".to_owned(),
             sfzpath: "".to_owned(),
+            layers: "10".to_owned(),
+//            pb: 42.0,
         }
     }
 }
@@ -51,27 +60,43 @@ impl eframe::App for Xcv {
             ui.horizontal(|ui| {
                 ui.label("MIDI Path: ");
                 ui.text_edit_singleline(&mut self.midipath);
-            });
-            ui.horizontal(|ui| {
                 ui.label("SFZ Path: ");
                 ui.text_edit_singleline(&mut self.sfzpath);
+                ui.label("Layer Count: ");
+                ui.text_edit_singleline(&mut self.layers);
             });
-                if ui.button("Render").clicked() {
-                    playsound::playsound("./assets/render-on.wav");
-                    render::render(&self.midipath, &self.sfzpath);
+                if ui.button("Render")
+                .clicked()
+                {
+                    thread::spawn(|| {
+                        playsound::playsound("./assets/render-on.wav");
+                    });
+                    render::render(&self.midipath, &self.sfzpath, &self.layers);
                 }
-                if ui.button("Play").clicked() {
-                    playsound::playsound("./assets/render-on.wav");
+                if ui.button("Play")
+                .clicked() 
+                {
+                    thread::spawn(|| {
+                        playsound::playsound("./assets/render-on.wav");
+                    });
                     realtime::play(&self.midipath, &self.sfzpath);
                 }
-                if ui.button("Benchmark").clicked() {
-                    //playsound();
+                if ui.button("Benchmark")
+                .clicked() 
+                {
+                    thread::spawn(|| {
+                        playsound::playsound("./assets/render-on.wav");
+                    });
                     benchmark::benchmark();
-                    playsound::playsound("./assets/render-on.wav");
                 }
-            });
-        }
+                //ui.spacing_mut().slider_width = ctx.available_rect().width() - 20.0;
+                //let progress = *scalar / 360.0;
+                //ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| {
+                //    ui.add(egui::ProgressBar::show_percentage(progress));
+                //});
+        });
     }
+}
 
 
 
