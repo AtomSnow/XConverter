@@ -11,6 +11,8 @@ use std::thread;
 
 //# [tokio::main]
 fn main() {
+    println!("Hey! If you are using CMD for console, then don't, use PowerShell due to weird shit happening :)");
+    println!("Have fun!");
     let options = eframe::NativeOptions {
         always_on_top: false,
         maximized: false,
